@@ -1,6 +1,11 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY as string });
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+if (!apiKey) {
+  throw new Error("VITE_GEMINI_API_KEY is not defined. Add it to .env and restart Vite.");
+}
+
+const ai = new GoogleGenAI({ apiKey });
 
 export const geminiService = {
   async getMatchAnalysis(teamA: string, teamB: string, sport: string) {
