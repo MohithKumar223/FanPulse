@@ -1,0 +1,109 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Extended user profile for FanPulse",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "totalPoints": { "type": "number" },
+        "currentStreak": { "type": "number" },
+        "maxStreak": { "type": "number" },
+        "level": { "type": "number" },
+        "experience": { "type": "number" },
+        "predictionsCount": { "type": "number" },
+        "correctPredictions": { "type": "number" },
+        "lastActive": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "totalPoints", "currentStreak", "level"]
+    },
+    "Tournament": {
+      "title": "Tournament",
+      "description": "A sports or gaming tournament",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "sport": { "type": "string" },
+        "status": { "type": "string", "enum": ["upcoming", "active", "completed"] },
+        "startDate": { "type": "string", "format": "date-time" },
+        "endDate": { "type": "string", "format": "date-time" },
+        "bannerImage": { "type": "string" }
+      },
+      "required": ["id", "name", "status"]
+    },
+    "Match": {
+      "title": "Match",
+      "description": "An individual match within a tournament",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "tournamentId": { "type": "string" },
+        "teamA": { "type": "string" },
+        "teamB": { "type": "string" },
+        "startTime": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["scheduled", "ongoing", "finished", "cancelled"] },
+        "winner": { "type": "string" },
+        "scoreA": { "type": "number" },
+        "scoreB": { "type": "number" },
+        "aiAnalysis": { "type": "string" }
+      },
+      "required": ["id", "tournamentId", "teamA", "teamB", "status"]
+    },
+    "Prediction": {
+      "title": "Prediction",
+      "description": "A user's prediction for a match",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "matchId": { "type": "string" },
+        "predictedWinner": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "correct", "incorrect"] },
+        "pointsEarned": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userId", "matchId", "predictedWinner", "status"]
+    },
+    "Achievement": {
+      "title": "Achievement",
+      "description": "Milestone rewards for fans",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "type": { "type": "string" },
+        "unlockedAt": { "type": "string", "format": "date-time" },
+        "badgeIcon": { "type": "string" }
+      },
+      "required": ["id", "userId", "title"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Global user profiles"
+    },
+    "/tournaments/{tournamentId}": {
+      "schema": "Tournament",
+      "description": "Tournaments available for prediction"
+    },
+    "/tournaments/{tournamentId}/matches/{matchId}": {
+      "schema": "Match",
+      "description": "Matches within a tournament"
+    },
+    "/users/{userId}/predictions/{predictionId}": {
+      "schema": "Prediction",
+      "description": "A user's match predictions"
+    },
+    "/users/{userId}/achievements/{achievementId}": {
+      "schema": "Achievement",
+      "description": "User unlocked achievements"
+    }
+  }
+}

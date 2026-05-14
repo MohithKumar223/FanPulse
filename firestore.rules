@@ -1,0 +1,47 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Default Deny (Disabled for troubleshooting top-level collections)
+    // match /{document=**} { allow read, write: if false; }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // 1. User Profiles
+    match /users/{userId} {
+      allow read: if true;
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId);
+      
+      // Predictions subcollection
+      match /predictions/{predictionId} {
+        allow read: if isOwner(userId) || true; // Relaxed for the demo
+        allow create: if isOwner(userId);
+        allow update: if isOwner(userId);
+      }
+
+      // Achievements subcollection
+      match /achievements/{achievementId} {
+        allow read: if isOwner(userId) || true; // Relaxed for the demo
+        allow create: if isOwner(userId);
+      }
+    }
+
+    // 2. Tournaments & Matches
+    match /tournaments/{tournamentId} {
+      allow read: if true;
+      allow write: if false;
+
+      match /matches/{matchId} {
+        allow read: if true;
+        allow write: if false;
+      }
+    }
+  }
+}
